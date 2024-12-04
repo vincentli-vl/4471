@@ -4,7 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import Button from '../ui/button'
-import SearchBar from '../ui/searchbar'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '../../context/AuthContext'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -16,9 +17,16 @@ const navigation = [
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
+  const { isLoggedIn, logout } = useAuth()
 
-  const handleSearch = (term: string) => {
-    console.log('Searching for:', term)
+  const handleSignOut = () => {
+    logout()
+    router.push('/login')
+  }
+
+  const handleLogin = () => {
+    router.push('/login')
   }
 
   return (
@@ -43,7 +51,11 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
-            <Button label="Signout" variant="outline" size="small" />
+            {isLoggedIn ? (
+              <Button label="Signout" variant="outline" size="small" onClick={handleSignOut} />
+            ) : (
+              <Button label="Login" variant="outline" size="small" onClick={handleLogin} />
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -63,12 +75,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Search Bar */}
-        <SearchBar 
-          placeholder="Search projects..."
-          onSearch={handleSearch}
-        />
-
         {/* Mobile menu */}
         {isOpen && (
           <div className="sm:hidden">
@@ -84,7 +90,11 @@ export default function Header() {
                 </Link>
               ))}
               <div className="space-y-2 px-3 py-4">
-                <Button label="Signout" variant="outline" className="w-full" />
+                {isLoggedIn ? (
+                  <Button label="Signout" variant="outline" className="w-full" onClick={handleSignOut} />
+                ) : (
+                  <Button label="Login" variant="outline" className="w-full" onClick={handleLogin} />
+                )}
               </div>
             </div>
           </div>
