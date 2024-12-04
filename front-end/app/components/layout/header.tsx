@@ -8,6 +8,7 @@ import SearchBar from '../ui/searchbar'
 
 const navigation = [
   { name: 'Home', href: '/' },
+  { name: 'Dashboard', href: '/dashboard' },
   { name: 'About', href: '/about' },
   { name: 'Services', href: '/services' },
   { name: 'Contact', href: '/contact' },
@@ -18,7 +19,6 @@ export default function Header() {
 
   const handleSearch = (term: string) => {
     console.log('Searching for:', term)
-    // Implement your search logic here
   }
 
   return (
@@ -43,8 +43,7 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
-            <Button label="Sign In" variant="outline" size="small" />
-            <Button label="Sign Up" size="small" />
+            <Button label="Signout" variant="outline" size="small" />
           </div>
 
           {/* Mobile menu button */}
@@ -85,8 +84,7 @@ export default function Header() {
                 </Link>
               ))}
               <div className="space-y-2 px-3 py-4">
-                <Button label="Sign In" variant="outline" className="w-full" />
-                <Button label="Sign Up" className="w-full" />
+                <Button label="Signout" variant="outline" className="w-full" />
               </div>
             </div>
           </div>

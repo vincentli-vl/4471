@@ -5,15 +5,15 @@ import Table from '../components/table/table'
 import SearchBar from '../components/ui/searchbar'
 import Button from '../components/ui/button'
 
-// Example data - replace with your actual data fetching
+// Example data
 const mockData = [
-  { id: 1, name: 'Project A', status: 'active', progress: '75%', deadline: '2024-04-30' },
-  { id: 2, name: 'Project B', status: 'pending', progress: '30%', deadline: '2024-05-15' },
+  { id: 1, serviceName: 'Project A', port: 'active', version: '75%', deadline: '2024-04-30' },
+  { id: 2, serviceName: 'Project B', port: 'pending', version: '30%', deadline: '2024-05-15' },
 ]
 
 const columns = [
-  { key: 'name', header: 'Project Name' },
-  { key: 'status', header: 'Status',
+  { key: 'serviceName', header: 'Service Name' },
+  { key: 'port', header: 'Port',
     render: (value: string) => (
       <span className={`rounded-full px-2 py-1 text-sm ${
         value === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
@@ -22,8 +22,7 @@ const columns = [
       </span>
     )
   },
-  { key: 'progress', header: 'Progress' },
-  { key: 'deadline', header: 'Deadline' },
+  { key: 'version', header: 'Version' },
 ]
 
 export default function Dashboard() {
