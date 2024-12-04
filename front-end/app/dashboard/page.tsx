@@ -122,20 +122,20 @@ export default function Dashboard() {
     setIsDetailModalOpen(true); // Open detail modal
   };
 
-  const handleDeleteService = () => {
-    setMockData(mockData.filter((service) => service.id !== selectedRow.id)); // Remove the selected service
-    closeDetailModal(); // Close the modal
-  };
+  // const handleDeleteService = () => {
+  //   setMockData(mockData.filter((service) => service.id !== selectedRow.id)); // Remove the selected service
+  //   closeDetailModal(); // Close the modal
+  // };
 
-  const handleUpdateService = () => {
-    const updatedServices = mockData.map((service) =>
-      service.id === selectedRow.id
-        ? { ...selectedRow, ...newService }
-        : service
-    );
-    setMockData(updatedServices); // Update the service in the list
-    closeDetailModal(); // Close the modal
-  };
+  // const handleUpdateService = () => {
+  //   const updatedServices = mockData.map((service) =>
+  //     service.id === selectedRow.id
+  //       ? { ...selectedRow, ...newService }
+  //       : service
+  //   );
+  //   setMockData(updatedServices); // Update the service in the list
+  //   closeDetailModal(); // Close the modal
+  // };
 
   // Calculate the number of active services
   const totalServices = mockData.length;
@@ -154,10 +154,10 @@ export default function Dashboard() {
               placeholder="Search services..."
               onSearch={(term) => setSearchTerm(term)}
             />
-            <Button
+            {/* <Button
               label="New Service"
               onClick={() => setIsCreateModalOpen(true)} // Open modal for creating new service
-            />
+            /> */}
           </div>
         </div>
 
@@ -177,7 +177,7 @@ export default function Dashboard() {
           </div>
 
           {/* Modal for creating a new service */}
-          {isCreateModalOpen && (
+          {/* {isCreateModalOpen && (
             <Modal onClose={closeCreateModal}>
               <h2 className="text-lg font-semibold">Create New Service</h2>
               <div className="flex flex-col gap-2">
@@ -225,7 +225,7 @@ export default function Dashboard() {
                 <Button label="Create Service" onClick={handleCreateService} />
               </div>
             </Modal>
-          )}
+          )} */}
 
           {/* Modal for displaying selected service details */}
           {isDetailModalOpen && selectedRow && (
@@ -250,7 +250,7 @@ export default function Dashboard() {
               </p>
 
               {/* Update Service Inputs */}
-              <h3 className="mt-4 font-semibold">Update Service</h3>
+              {/* <h3 className="mt-4 font-semibold">Update Service</h3>
               <input
                 type="text"
                 placeholder="Service Name"
@@ -289,7 +289,7 @@ export default function Dashboard() {
               <div className="flex justify-between mt-4">
                 <Button label="Update Service" onClick={handleUpdateService} />
                 <Button label="Delete Service" onClick={handleDeleteService} />
-              </div>
+              </div> */}
               <Button label="Close" onClick={closeDetailModal} />
             </Modal>
           )}
