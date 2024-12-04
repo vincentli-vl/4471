@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+'use client'
+// import { useEffect, useState } from 'react'
+// import { useRouter } from 'next/navigation'
 import Table from '../components/table/table'
 import SearchBar from '../components/ui/searchbar'
 import Button from '../components/ui/button'
@@ -26,42 +27,42 @@ const columns = [
 ]
 
 export default function Dashboard() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // const router = useRouter()
+  // const [isLoading, setIsLoading] = useState(true)
+  // const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Replace this with your actual auth check
-        const authStatus = localStorage.getItem('isLoggedIn') === 'true'
-        setIsAuthenticated(authStatus)
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       // Replace this with your actual auth check
+  //       const authStatus = localStorage.getItem('isLoggedIn') === 'true'
+  //       setIsAuthenticated(authStatus)
         
-        if (!authStatus) {
-          router.push('/login')
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error)
-        router.push('/login')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  //       if (!authStatus) {
+  //         router.push('/login')
+  //       }
+  //     } catch (error) {
+  //       console.error('Auth check failed:', error)
+  //       router.push('/login')
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
 
-    checkAuth()
-  }, [router])
+  //   checkAuth()
+  // }, [router])
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center">
+  //       <div className="text-lg">Loading...</div>
+  //     </div>
+  //   )
+  // }
 
-  if (!isAuthenticated) {
-    return null // Router will handle redirect
-  }
+  // if (!isAuthenticated) {
+  //   return null // Router will handle redirect
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
