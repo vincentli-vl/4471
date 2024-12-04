@@ -7,7 +7,7 @@ import Button from "../components/ui/button";
 import Modal from "../components/ui/modal";
 
 // Example data
-const mockData = [
+const initialMockData = [
   {
     id: 1,
     serviceName: "Service A",
@@ -53,9 +53,21 @@ const columns = [
 
 export default function Dashboard() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [mockData, setMockData] = useState(initialMockData); // State for services
+  const [newService, setNewService] = useState({
+    serviceName: "",
+    version: "",
+    numInstances: "",
+    health: "Healthy",
+    url: "",
+    description: "",
+    requestExample: "",
+    responseExample: "",
+  });
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -64,19 +76,72 @@ export default function Dashboard() {
     }
   }, [router]);
 
-  const handleRowClick = (row) => {
-    setSelectedRow(row);
-    setIsModalOpen(true);
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false);
+    setNewService({
+      serviceName: "",
+      version: "",
+      numInstances: "",
+      health: "Healthy",
+      url: "",
+      description: "",
+      requestExample: "",
+      responseExample: "",
+    }); // Reset new service form
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeDetailModal = () => {
+    setIsDetailModalOpen(false);
     setSelectedRow(null);
   };
 
   const filteredData = mockData.filter((service) =>
     service.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCreateService = () => {
+    const newId = mockData.length + 1; // Increment ID based on current length
+    const newInstanceCount =
+      mockData.reduce(
+        (max, service) => Math.max(max, parseInt(service.numInstances)),
+        0
+      ) + 1; // Increment instance count
+
+    const createdService = {
+      id: newId,
+      ...newService,
+      numInstances: newInstanceCount.toString(), // Set the incremented instance count
+    };
+
+    setMockData([...mockData, createdService]); // Add new service to the list
+    closeCreateModal(); // Close the modal
+  };
+
+  const handleRowClick = (row) => {
+    setSelectedRow(row);
+    setIsDetailModalOpen(true); // Open detail modal
+  };
+
+  const handleDeleteService = () => {
+    setMockData(mockData.filter((service) => service.id !== selectedRow.id)); // Remove the selected service
+    closeDetailModal(); // Close the modal
+  };
+
+  const handleUpdateService = () => {
+    const updatedServices = mockData.map((service) =>
+      service.id === selectedRow.id
+        ? { ...selectedRow, ...newService }
+        : service
+    );
+    setMockData(updatedServices); // Update the service in the list
+    closeDetailModal(); // Close the modal
+  };
+
+  // Calculate the number of active services
+  const totalServices = mockData.length;
+  const activeServices = mockData.filter(
+    (service) => service.health === "Healthy"
+  ).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -91,7 +156,7 @@ export default function Dashboard() {
             />
             <Button
               label="New Service"
-              onClick={() => console.log("Create new service")}
+              onClick={() => setIsCreateModalOpen(true)} // Open modal for creating new service
             />
           </div>
         </div>
@@ -100,33 +165,132 @@ export default function Dashboard() {
         <div className="grid gap-6">
           {/* Stats Section */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              "Total Services",
-              "Active Services",
-            ].map((stat) => (
+            {["Total Services", "Active Services"].map((stat, index) => (
               <div key={stat} className="rounded-lg bg-white p-6 shadow-sm">
                 <h3 className="text-sm font-medium text-gray-500">{stat}</h3>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">3</p>
+                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                  {index === 0 ? totalServices : activeServices}{" "}
+                  {/* Display total or active services */}
+                </p>
               </div>
             ))}
           </div>
 
-          {/* Modal for displaying selected service details */}
-          {isModalOpen && (
-            <Modal onClose={closeModal}>
-              <h2 className="text-lg font-semibold">
-                {selectedRow?.serviceName}
-              </h2>
-              <div className="flex flex-row gap-2">
-                <span>URL: </span>
-                <a href={selectedRow?.url} className="text-blue-500 underline">
-                  {selectedRow?.url}
-                </a>
+          {/* Modal for creating a new service */}
+          {isCreateModalOpen && (
+            <Modal onClose={closeCreateModal}>
+              <h2 className="text-lg font-semibold">Create New Service</h2>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="text"
+                  placeholder="Service Name"
+                  value={newService.serviceName}
+                  onChange={(e) =>
+                    setNewService({
+                      ...newService,
+                      serviceName: e.target.value,
+                    })
+                  }
+                  className="border rounded p-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Version"
+                  value={newService.version}
+                  onChange={(e) =>
+                    setNewService({ ...newService, version: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+                <input
+                  type="text"
+                  placeholder="URL"
+                  value={newService.url}
+                  onChange={(e) =>
+                    setNewService({ ...newService, url: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+                <textarea
+                  placeholder="Description"
+                  value={newService.description}
+                  onChange={(e) =>
+                    setNewService({
+                      ...newService,
+                      description: e.target.value,
+                    })
+                  }
+                  className="border rounded p-2"
+                />
+                <Button label="Create Service" onClick={handleCreateService} />
               </div>
-              <p>Description: {selectedRow?.description}</p>
-              <p>Request Example: {selectedRow?.requestExample}</p>
-              <p>Response Example: {selectedRow?.responseExample}</p>
-              <Button label="Close" onClick={closeModal} />
+            </Modal>
+          )}
+
+          {/* Modal for displaying selected service details */}
+          {isDetailModalOpen && selectedRow && (
+            <Modal onClose={closeDetailModal}>
+              <h2 className="text-lg font-semibold">
+                {selectedRow.serviceName}
+              </h2>
+              <p>
+                <strong>URL:</strong>{" "}
+                <a href={selectedRow.url} className="text-blue-500 underline">
+                  {selectedRow.url}
+                </a>
+              </p>
+              <p>
+                <strong>Description:</strong> {selectedRow.description}
+              </p>
+              <p>
+                <strong>Request Example:</strong> {selectedRow.requestExample}
+              </p>
+              <p>
+                <strong>Response Example:</strong> {selectedRow.responseExample}
+              </p>
+
+              {/* Update Service Inputs */}
+              <h3 className="mt-4 font-semibold">Update Service</h3>
+              <input
+                type="text"
+                placeholder="Service Name"
+                value={newService.serviceName}
+                onChange={(e) =>
+                  setNewService({ ...newService, serviceName: e.target.value })
+                }
+                className="border rounded p-2"
+              />
+              <input
+                type="text"
+                placeholder="Version"
+                value={newService.version}
+                onChange={(e) =>
+                  setNewService({ ...newService, version: e.target.value })
+                }
+                className="border rounded p-2"
+              />
+              <input
+                type="text"
+                placeholder="URL"
+                value={newService.url}
+                onChange={(e) =>
+                  setNewService({ ...newService, url: e.target.value })
+                }
+                className="border rounded p-2"
+              />
+              <textarea
+                placeholder="Description"
+                value={newService.description}
+                onChange={(e) =>
+                  setNewService({ ...newService, description: e.target.value })
+                }
+                className="border rounded p-2"
+              />
+              <div className="flex justify-between mt-4">
+                <Button label="Update Service" onClick={handleUpdateService} />
+                <Button label="Delete Service" onClick={handleDeleteService} />
+              </div>
+              <Button label="Close" onClick={closeDetailModal} />
             </Modal>
           )}
 
