@@ -81,7 +81,15 @@ export default function Dashboard() {
   // Function to fetch services from the API
   const fetchServices = async () => {
     try {
-      const response = await fetch('http://localhost:4471/api/service');
+      const token = localStorage.getItem("token"); 
+      const response = await fetch('http://localhost:4471/api/service', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
+          'Content-Type': 'application/json',
+        },
+      });
+
       if (!response.ok) {
         throw new Error('Network response was not ok ' + response.statusText);
       }

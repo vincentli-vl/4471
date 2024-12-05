@@ -11,14 +11,28 @@ const LoginPage: React.FC = () => {
   const router = useRouter();
   const { login } = useAuth(); // Use the login function from context
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate authentication (replace with real authentication logic)
-    if (username === 'admin' && password === 'password') {
+    try {
+      const response = await fetch('http://localhost:4471/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed: ' + response.statusText);
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.token); // Store the JWT token in local storage
       login(); // Call the login function
       router.push('/dashboard'); // Redirect to dashboard
-    } else {
-      setError('Invalid username or password');
+    } catch (error) {
+      setError(error.message); // Set error message to display
+      console.error('There was a problem with the login operation:', error);
     }
   };
 
