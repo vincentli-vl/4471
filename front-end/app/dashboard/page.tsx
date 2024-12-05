@@ -77,6 +77,18 @@ export default function Dashboard() {
     }
   }, [router]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchServices(); // Call your fetch function
+    };
+
+    fetchData(); // Initial fetch
+
+    const intervalId = setInterval(fetchData, 5000); // Fetch every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
+
   // Function to fetch services from the API
   const fetchServices = async () => {
     try {
