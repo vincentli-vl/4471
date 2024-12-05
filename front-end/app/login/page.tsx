@@ -14,7 +14,10 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:4471/api/login', {
+      // Local
+      const response = await fetch('http://localhost:4471/login', { 
+      // Cloud
+      // const response = await fetch('https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

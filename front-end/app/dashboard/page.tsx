@@ -82,7 +82,10 @@ export default function Dashboard() {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem("token"); 
-      const response = await fetch('http://localhost:4471/api/service', {
+      // Local
+      const response = await fetch('http://localhost:4471/services', {
+      // Cloud
+      // const response = await fetch('https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/services', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
@@ -94,6 +97,7 @@ export default function Dashboard() {
         throw new Error('Network response was not ok ' + response.statusText);
       }
       const data = await response.json();
+      console.log(data);
       setMockData(data); // Update state with fetched data
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
