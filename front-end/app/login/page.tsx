@@ -30,7 +30,8 @@ const LoginPage: React.FC = () => {
       }
 
       const data = await response.json();
-      localStorage.setItem("token", data.token); // Store the JWT token in local storage
+      localStorage.setItem("token", data.accessToken); // Store the JWT token in local storage
+      console.log(data);
       login(); // Call the login function
       router.push('/dashboard'); // Redirect to dashboard
     } catch (error) {

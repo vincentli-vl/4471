@@ -1,0 +1,93 @@
+@jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzMzMzg0MDM3LCJleHAiOjE3MzMzODc2Mzd9.7tt2QlSA0K9f4hEjCx4NYZKTcNKC1ttc_8RA4bwK4Zc
+###
+# POST /login
+# Body: { username, password }
+POST http://localhost:4471/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+
+###
+# POST /register
+# Body: { serviceName, port, description, version, instanceId, url, reqEx, resEx }
+
+#All params
+POST http://localhost:4471/register
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "serviceName": "S1",
+    "port": "22",
+    "description": "desc",
+    "version": "2.3",
+    "instanceId": "1",
+    "url": "http://"
+}
+
+###
+#Missing params
+POST http://localhost:4471/register
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "serviceName": "S2",
+    "port": "22",
+    "description": "desc",
+    "version": "2.3",
+    "instanceId": "3"
+}
+
+
+###
+# POST /deregister
+# Body: { serviceName, instanceId }
+
+# All params
+POST http://localhost:4471/deregister
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "serviceName": "S1",
+    "instanceId": 3
+}
+
+###
+# Only name
+POST http://localhost:4471/deregister
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "serviceName": "S2"
+}
+
+###
+# Get all registered services
+# GET /services
+GET http://localhost:4471/services
+Authorization: Bearer {{jwtToken}}
+
+###
+# Discover available instances for a service
+# GET /discover/:serviceName
+GET http://localhost:4471/discover/S1
+Authorization: Bearer {{jwtToken}}
+
+###
+# POST /reregister
+# Body: { serviceName, instanceId }
+POST http://localhost:4471/reregister
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "serviceName": "S1",
+    "instanceId": 1
+}

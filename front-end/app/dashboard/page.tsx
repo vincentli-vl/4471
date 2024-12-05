@@ -48,8 +48,7 @@ const columns = [
   { key: "serviceName", header: "Service Name" },
   { key: "version", header: "Version" },
   { key: "numInstances", header: "Number of Instances" },
-  { key: "health", header: "Health" },
-];
+  { key: "health", header: "Health" },];
 
 export default function Dashboard() {
   const router = useRouter();
@@ -82,23 +81,40 @@ export default function Dashboard() {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem("token"); 
-      // Local
+      if (!token) {
+        console.error("No token found. Please log in.");
+        return; // Exit if no token is found
+      }
+
       const response = await fetch('http://localhost:4471/services', {
-      // Cloud
-      // const response = await fetch('https://service-registry-cs4471.1p2lshm2wxjn.us-east.codeengine.appdomain.cloud/services', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok ' + response.statusText);
       }
       const data = await response.json();
       console.log(data);
       setMockData(data); // Update state with fetched data
+  
+      // Count instances per service
+      const instancesCount = data.reduce((acc, service) => {
+        acc[service.serviceName] = (acc[service.serviceName] || 0) + 1; // Increment count for each service
+        return acc;
+      }, {});
+  
+      // Update mockData to include instance count
+      const updatedData = data.map(service => ({
+        ...service,
+        health: "Healthy",
+        numInstances: instancesCount[service.serviceName] // Add instance count to each service
+      }));
+  
+      setMockData(updatedData); // Update state with modified data
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
