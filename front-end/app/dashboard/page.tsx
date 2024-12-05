@@ -73,8 +73,24 @@ export default function Dashboard() {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
       router.push("/login");
+    } else {
+      fetchServices(); // Fetch services when the component mounts
     }
   }, [router]);
+
+  // Function to fetch services from the API
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/service');
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      const data = await response.json();
+      setMockData(data); // Update state with fetched data
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
 
   const closeCreateModal = () => {
     setIsCreateModalOpen(false);
