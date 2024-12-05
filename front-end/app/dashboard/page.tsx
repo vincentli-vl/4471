@@ -81,7 +81,7 @@ export default function Dashboard() {
   // Function to fetch services from the API
   const fetchServices = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/service');
+      const response = await fetch('http://localhost:4471/api/service');
       if (!response.ok) {
         throw new Error('Network response was not ok ' + response.statusText);
       }
