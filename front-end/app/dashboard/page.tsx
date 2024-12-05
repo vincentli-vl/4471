@@ -111,19 +111,22 @@ export default function Dashboard() {
       }
       const data = await response.json();
       console.log(data);
-      setMockData(data); // Update state with fetched data
-  
+      
       // Count instances per service
       const instancesCount = data.reduce((acc, service) => {
         acc[service.serviceName] = (acc[service.serviceName] || 0) + 1; // Increment count for each service
         return acc;
       }, {});
   
-      // Update mockData to include instance count
-      const updatedData = data.map(service => ({
+      // Filter out duplicate services by serviceName
+      const uniqueServices = Array.from(new Map(data.map(service => [service.serviceName, { ...service, numInstances: instancesCount[service.serviceName] }])).values());
+
+      setMockData(uniqueServices); // Update state with unique services
+
+      // Update mockData to include health status
+      const updatedData = uniqueServices.map(service => ({
         ...service,
         health: "Healthy",
-        numInstances: instancesCount[service.serviceName] // Add instance count to each service
       }));
   
       setMockData(updatedData); // Update state with modified data
