@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
       login(); // Call the login function
       router.push('/dashboard'); // Redirect to dashboard
     } catch (error) {
-      setError(error.message); // Set error message to display
+      // setError(error.message); // Set error message to display
       console.error('There was a problem with the login operation:', error);
     }
   };

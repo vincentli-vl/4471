@@ -2,9 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext<{ isLoggedIn: boolean; login: () => void; logout: () => void } | null>(null);
 
-export const AuthProvider = ({ children }) => {
+// Define the props type for AuthProvider
+interface AuthProviderProps {
+  children: React.ReactNode; // Specify the type for children
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('isLoggedIn') === 'true';
@@ -41,5 +46,9 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

@@ -50,11 +50,23 @@ const columns = [
   { key: "numInstances", header: "Number of Instances" },
   { key: "health", header: "Health" },];
 
+interface Service {
+  id: number;
+  serviceName: string;
+  version: string;
+  numInstances: string;
+  health: string;
+  url: string;
+  description: string;
+  requestExample: string;
+  responseExample: string;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState<Service | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [mockData, setMockData] = useState(initialMockData); // State for services
   const [newService, setNewService] = useState({
@@ -111,20 +123,17 @@ export default function Dashboard() {
       }
       const data = await response.json();
       console.log(data);
-      
       // Count instances per service
-      const instancesCount = data.reduce((acc, service) => {
+      const instancesCount = data.reduce((acc: Record<string, number>, service: { serviceName: string }) => {
         acc[service.serviceName] = (acc[service.serviceName] || 0) + 1; // Increment count for each service
         return acc;
-      }, {});
-  
-      // Filter out duplicate services by serviceName
-      const uniqueServices = Array.from(new Map(data.map(service => [service.serviceName, { ...service, numInstances: instancesCount[service.serviceName] }])).values());
+      }, {} as Record<string, number>);
+      // Filter out duplicate services by serviceName and ensure they are of type Service
+      const uniqueServices: Service[] = Array.from(new Map(data.map((service: Service) => [service.serviceName, { ...service, numInstances: instancesCount[service.serviceName] }])).values()) as Service[];
 
       setMockData(uniqueServices); // Update state with unique services
-
       // Update mockData to include health status
-      const updatedData = uniqueServices.map(service => ({
+      const updatedData = uniqueServices.map((service: Service) => ({
         ...service,
         health: "Healthy",
       }));
@@ -176,7 +185,7 @@ export default function Dashboard() {
     closeCreateModal(); // Close the modal
   };
 
-  const handleRowClick = (row) => {
+  const handleRowClick = (row: any) => {
     setSelectedRow(row);
     setIsDetailModalOpen(true); // Open detail modal
   };
@@ -290,71 +299,29 @@ export default function Dashboard() {
           {isDetailModalOpen && selectedRow && (
             <Modal onClose={closeDetailModal}>
               <h2 className="text-lg font-semibold">
-                {selectedRow.serviceName}
+                {selectedRow && 'serviceName' in selectedRow ? selectedRow.serviceName : ''}
               </h2>
               <p>
                 <strong>URL:</strong>{" "}
-                <a href={selectedRow.url} className="text-blue-500 underline">
-                  {selectedRow.url}
+                <a href={selectedRow?.url} className="text-blue-500 underline">
+                  {selectedRow?.url}
                 </a>
               </p>
               <p>
-                <strong>Description:</strong> {selectedRow.description}
+                <strong>Description:</strong> {selectedRow?.description}
               </p>
               <p>
-                <strong>Request Example:</strong> {selectedRow.requestExample}
+                <strong>Request Example:</strong> {selectedRow?.requestExample}
               </p>
               <p>
-                <strong>Response Example:</strong> {selectedRow.responseExample}
+                <strong>Response Example:</strong> {selectedRow?.responseExample}
               </p>
-
-              {/* Update Service Inputs */}
-              {/* <h3 className="mt-4 font-semibold">Update Service</h3>
-              <input
-                type="text"
-                placeholder="Service Name"
-                value={newService.serviceName}
-                onChange={(e) =>
-                  setNewService({ ...newService, serviceName: e.target.value })
-                }
-                className="border rounded p-2"
-              />
-              <input
-                type="text"
-                placeholder="Version"
-                value={newService.version}
-                onChange={(e) =>
-                  setNewService({ ...newService, version: e.target.value })
-                }
-                className="border rounded p-2"
-              />
-              <input
-                type="text"
-                placeholder="URL"
-                value={newService.url}
-                onChange={(e) =>
-                  setNewService({ ...newService, url: e.target.value })
-                }
-                className="border rounded p-2"
-              />
-              <textarea
-                placeholder="Description"
-                value={newService.description}
-                onChange={(e) =>
-                  setNewService({ ...newService, description: e.target.value })
-                }
-                className="border rounded p-2"
-              />
-              <div className="flex justify-between mt-4">
-                <Button label="Update Service" onClick={handleUpdateService} />
-                <Button label="Delete Service" onClick={handleDeleteService} />
-              </div> */}
               <Button label="Close" onClick={closeDetailModal} />
             </Modal>
           )}
 
           {/* Services Table */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white p-6 shadow-sm text-black">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">
               Services Overview
             </h2>
