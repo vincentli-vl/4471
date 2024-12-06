@@ -18,11 +18,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'CS4471'
 const serviceRegistry = new ServiceRegistry()
 const dbClient = new DbClient()
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  methods: ['GET', 'POST'],
-  credentials: true
-}))
+app.use(cors())
 
 app.use(bodyParser.json())
 
